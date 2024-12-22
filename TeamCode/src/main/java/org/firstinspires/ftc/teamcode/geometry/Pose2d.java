@@ -246,4 +246,8 @@ public class Pose2d {
     public double getHeading() {
         return m_rotation.getRadians();
     }
+
+    public Pose2D toPinpointPose(){
+        return new Pose2D(DistanceUnit.INCH, getX(), getY(), AngleUnit.RADIANS, getHeading());
+    }
 }
