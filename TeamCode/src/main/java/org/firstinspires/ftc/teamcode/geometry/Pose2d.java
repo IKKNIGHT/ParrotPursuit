@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.geometry;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 /**
  * A two-dimensional position that includes a {@link Vector2d} and
  * a heading angle. Look at {@link Vector2d} for information on what
@@ -41,6 +47,16 @@ public class Pose2d {
     public Pose2d(double x, double y, Rotation2d rotation) {
         m_translation = new Translation2d(x, y);
         m_rotation = rotation;
+    }
+
+    /**
+     * Convenience constructors that takes in <code>Pose2D</code> directly for odometry support
+     *
+     * @param pose2D        Pose2D component for the translational and rotational component of the pose.
+     */
+    public Pose2d(Pose2D pose2D){
+        m_translation = new Translation2d(pose2D.getX(DistanceUnit.INCH), pose2D.getY(DistanceUnit.INCH));
+        m_rotation = new Rotation2d(pose2D.getHeading(AngleUnit.RADIANS));
     }
 
     /**
