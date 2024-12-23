@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.localization.Localizer;
 import org.firstinspires.ftc.teamcode.localization.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.localization.ThreeDeadWheelOdometry;
 import org.firstinspires.ftc.teamcode.utils.controllers.PIDFController;
 
 public abstract class Follower {
@@ -23,6 +24,8 @@ public abstract class Follower {
         // Initialize localizer (uses PinpointLocalizer by default)
         if (DriveConstants.LOCALIZER_CLASS == PinpointLocalizer.class) {
             localizer = new PinpointLocalizer(hardwareMap);
+        }else if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelOdometry.class){
+            localizer = new ThreeDeadWheelOdometry(hardwareMap);
         }
     }
 

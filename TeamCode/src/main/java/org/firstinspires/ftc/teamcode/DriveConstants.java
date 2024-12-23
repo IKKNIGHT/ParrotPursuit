@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.teamcode.localization.Localizer;
 import org.firstinspires.ftc.teamcode.localization.PinpointLocalizer;
 
 public class DriveConstants {
     // TODO: change the localiser type, to a class that extends localizer
-    //   ex : Localizor.class
+    //   ex : public static final Class LOCALIZER_CLASS = ThreeDeadWheelOdometry.class;
     public static final Class LOCALIZER_CLASS = PinpointLocalizer.class;
+    // public static final Class LOCALIZER_CLASS = ThreeDeadWheelOdometry.class;
+
 
     public static class ThreeDeadWheelConfig{
         public static final String LEFT_ENCODER = "left_encoder";

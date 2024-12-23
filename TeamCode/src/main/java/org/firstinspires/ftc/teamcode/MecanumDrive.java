@@ -43,7 +43,7 @@ public class MecanumDrive extends Follower{
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Configure motor direction if needed (currently commented out)
+        // TODO: Configure motor direction if needed (currently commented out)
         // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Initialize feedforward controllers
