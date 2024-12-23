@@ -42,8 +42,9 @@ public class MecanumDrive {
         //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        // TODO: change the localiser type, to a class that extends localizer
-        //   ex : localizer = new Localizer(hardwareMap);
-        localizer = new PinpointLocalizer(hardwareMap);
+        // add more localizer classes as you wish here.
+        if(DriveConstants.LOCALIZER_CLASS == PinpointLocalizer.class){
+            localizer = new PinpointLocalizer(hardwareMap);
+        }
     }
 }
