@@ -47,9 +47,9 @@ public class MecanumDrive extends Follower{
         // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Initialize feedforward controllers
-        forwardFeedforward = new SimpleMotorFeedforward(DriveConstants.TuneableParams.FORWARD_KS, DriveConstants.TuneableParams.FORWARD_KV);
-        strafeFeedforward = new SimpleMotorFeedforward(DriveConstants.TuneableParams.STRAFE_KS, DriveConstants.TuneableParams.STRAFE_KV);
-        headingFeedforward = new SimpleMotorFeedforward(DriveConstants.TuneableParams.ROTATIONAL_KS, DriveConstants.TuneableParams.ROTATIONAL_KV);
+        forwardFeedforward = new SimpleMotorFeedforward(DriveConstants.TunableParams.FORWARD_KS, DriveConstants.TunableParams.FORWARD_KV);
+        strafeFeedforward = new SimpleMotorFeedforward(DriveConstants.TunableParams.STRAFE_KS, DriveConstants.TunableParams.STRAFE_KV);
+        headingFeedforward = new SimpleMotorFeedforward(DriveConstants.TunableParams.ROTATIONAL_KS, DriveConstants.TunableParams.ROTATIONAL_KV);
     }
 
     /**

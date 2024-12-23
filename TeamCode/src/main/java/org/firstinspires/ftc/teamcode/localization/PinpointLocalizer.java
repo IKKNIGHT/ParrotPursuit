@@ -7,6 +7,7 @@ package org.firstinspires.ftc.teamcode.localization;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.DriveConstants;
 import org.firstinspires.ftc.teamcode.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.geometry.Transform2d;
 
@@ -30,10 +31,10 @@ public class PinpointLocalizer extends Localizer {
      * @param startPose the initial pose estimate for the robot.
      */
     public PinpointLocalizer(HardwareMap hwMap, Pose2d startPose){
-        odo = hwMap.get(GoBildaPinpointDriver.class, LocalizerConstants.PINPOINT_NAME);
-        odo.setOffsets(LocalizerConstants.PINPOINT_X_OFFSET, LocalizerConstants.PINPOINT_Y_OFFSET);
-        odo.setEncoderResolution(LocalizerConstants.POD);
-        odo.setEncoderDirections(LocalizerConstants.X_DIRECTION, LocalizerConstants.Y_DIRECTION);
+        odo = hwMap.get(GoBildaPinpointDriver.class, DriveConstants.PinpointConfig.PINPOINT_NAME);
+        odo.setOffsets(DriveConstants.PinpointConfig.PINPOINT_X_OFFSET, DriveConstants.PinpointConfig.PINPOINT_Y_OFFSET);
+        odo.setEncoderResolution(DriveConstants.PinpointConfig.POD);
+        odo.setEncoderDirections(DriveConstants.PinpointConfig.X_DIRECTION, DriveConstants.PinpointConfig.Y_DIRECTION);
 
         odo.setPosition(startPose.toPinpointPose());
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.teamcode.localization.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.localization.Localizer;
 import org.firstinspires.ftc.teamcode.localization.PinpointLocalizer;
 
@@ -9,7 +10,14 @@ public class DriveConstants {
     public static final Class LOCALIZER_CLASS = PinpointLocalizer.class;
     // public static final Class LOCALIZER_CLASS = ThreeDeadWheelOdometry.class;
 
-
+    public static class PinpointConfig{
+        public static String PINPOINT_NAME="odo";
+        public static double PINPOINT_X_OFFSET=0;
+        public static double PINPOINT_Y_OFFSET=0;
+        public static GoBildaPinpointDriver.GoBildaOdometryPods POD = GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
+        public static GoBildaPinpointDriver.EncoderDirection X_DIRECTION = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+        public static GoBildaPinpointDriver.EncoderDirection Y_DIRECTION = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+    }
     public static class ThreeDeadWheelConfig{
         public static final String LEFT_ENCODER = "left_encoder";
         public static final String RIGHT_ENCODER = "right_encoder";
@@ -28,7 +36,7 @@ public class DriveConstants {
     /**
      * Parameters for controlling the robot, including feedforward and PID coefficients.
      */
-    public static class TuneableParams {
+    public static class TunableParams {
         public static double FORWARD_KS = 0;
         public static double FORWARD_KV = 1;
 
