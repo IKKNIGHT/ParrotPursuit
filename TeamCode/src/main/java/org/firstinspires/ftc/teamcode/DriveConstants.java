@@ -4,8 +4,8 @@ import org.firstinspires.ftc.teamcode.localization.Localizer;
 import org.firstinspires.ftc.teamcode.localization.PinpointLocalizer;
 
 public class DriveConstants {
-    // TODO: change the localiser type, to a class that extends localizer
-    //   ex : public static final Class LOCALIZER_CLASS = ThreeDeadWheelOdometry.class;
+    // TODO: change the localizer type, to a class that extends localizer
+    //   ex : public static final Class LOCALIZER_CLASS = ThreeDeadWheelLocalizer.class;
     public static final Class LOCALIZER_CLASS = PinpointLocalizer.class;
     // public static final Class LOCALIZER_CLASS = ThreeDeadWheelOdometry.class;
 

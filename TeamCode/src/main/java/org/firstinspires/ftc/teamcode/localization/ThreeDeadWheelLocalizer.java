@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.geometry.Transform2d;
 import org.firstinspires.ftc.teamcode.geometry.Twist2d;
 
-public class ThreeDeadWheelOdometry extends Localizer{
+public class ThreeDeadWheelLocalizer extends Localizer{
      DcMotor leftEncoder = null;
      DcMotor rightEncoder = null;
      DcMotor horizontalEncoder = null;
@@ -25,7 +25,7 @@ public class ThreeDeadWheelOdometry extends Localizer{
      * Constructs a {@code ThreeDeadWheelOdometry} with a default starting pose of (0, 0, 0).
      *
      */
-    public ThreeDeadWheelOdometry(){
+    public ThreeDeadWheelLocalizer(){
         this(new Pose2d());
     }
     /**
@@ -33,7 +33,7 @@ public class ThreeDeadWheelOdometry extends Localizer{
      *
      * @param initialPose the initial pose estimate for the robot.
      */
-    public ThreeDeadWheelOdometry(Pose2d initialPose){
+    public ThreeDeadWheelLocalizer(Pose2d initialPose){
         super();
         previousAngle = initialPose.getRotation();
         robotPose = initialPose;
@@ -44,7 +44,7 @@ public class ThreeDeadWheelOdometry extends Localizer{
      *
      * @param hwMap the hardware map used to retrieve the {@code ThreeDeadWheelOdometry}.
      */
-    public ThreeDeadWheelOdometry(HardwareMap hwMap){
+    public ThreeDeadWheelLocalizer(HardwareMap hwMap){
         this();
         leftEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.LEFT_ENCODER);
         rightEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.RIGHT_ENCODER);
