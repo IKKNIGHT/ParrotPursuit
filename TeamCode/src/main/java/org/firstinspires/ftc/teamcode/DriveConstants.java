@@ -6,6 +6,14 @@ public class DriveConstants {
     // TODO: change the localiser type, to a class that extends localizer
     //   ex : Localizor.class
     public static final Class LOCALIZER_CLASS = PinpointLocalizer.class;
+
+    public static class ThreeDeadWheelConfig{
+        public static final String LEFT_ENCODER = "left_encoder";
+        public static final String RIGHT_ENCODER = "right_encoder";
+        public static final String HORIZONTAL_ENCODER = "horizontal_encoder";
+        public static final double CENTER_WHEEL_OFFSET = 1.0;
+        public static final double TRACK_WIDTH = 10.0;
+    }
     public static class MotorConfig{
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
