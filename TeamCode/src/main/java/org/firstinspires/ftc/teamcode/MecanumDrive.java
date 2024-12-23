@@ -25,12 +25,13 @@ public class MecanumDrive {
      */
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose){
         this.pose = pose;
-        // TODO: make sure your config has motors with these names (or change them)
-        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+
+        // change the config in the DriveConstants.java class
+        leftFront = hardwareMap.get(DcMotorEx.class, DriveConstants.MotorConfig.LEFT_FRONT);
+        leftBack = hardwareMap.get(DcMotorEx.class, DriveConstants.MotorConfig.LEFT_BACK);
+        rightBack = hardwareMap.get(DcMotorEx.class, DriveConstants.MotorConfig.RIGHT_BACK);
+        rightFront = hardwareMap.get(DcMotorEx.class, DriveConstants.MotorConfig.RIGHT_FRONT);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
