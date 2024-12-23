@@ -16,18 +16,34 @@ public class ThreeDeadWheelOdometry extends Localizer{
     private double prevLeftEncoder, prevRightEncoder, prevHorizontalEncoder;
     private Rotation2d previousAngle;
 
-    public Pose2d robotPose = new Pose2d(0,0,new Rotation2d(0)); // 0,0,0
+    public Pose2d robotPose;
+    public Pose2d previousPose;
     long start_time = System.nanoTime();
 
 
-
+    /**
+     * Constructs a {@code ThreeDeadWheelOdometry} with a default starting pose of (0, 0, 0).
+     *
+     */
     public ThreeDeadWheelOdometry(){
         this(new Pose2d());
     }
+    /**
+     * Constructs a {@code ThreeDeadWheelOdometry} with a default starting pose of (0, 0, 0).
+     *
+     * @param initialPose the initial pose estimate for the robot.
+     */
     public ThreeDeadWheelOdometry(Pose2d initialPose){
         super();
         previousAngle = initialPose.getRotation();
+        robotPose = initialPose;
+        previousPose = initialPose;
     }
+    /**
+     * Constructs a {@code ThreeDeadWheelOdometry} with a hardwareMap for retrieving the encoders.
+     *
+     * @param hwMap the hardware map used to retrieve the {@code ThreeDeadWheelOdometry}.
+     */
     public ThreeDeadWheelOdometry(HardwareMap hwMap){
         this();
         leftEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.LEFT_ENCODER);
@@ -43,6 +59,7 @@ public class ThreeDeadWheelOdometry extends Localizer{
     @Override
     public void setPoseEstimate(Pose2d newPose) {
         previousAngle = newPose.getRotation();
+        previousPose = robotPose;
         robotPose = newPose;
 
         prevLeftEncoder = 0;
@@ -57,8 +74,15 @@ public class ThreeDeadWheelOdometry extends Localizer{
 
     @Override
     public Transform2d getVelocity() {
-        return new Transform2d(new Pose2d(),new Pose2d());
+        return new Transform2d(new Pose2d(),new Pose2d(getXVelocity(),getYVelocity(),getThetaVelocity()));
     }
+    /**
+     * updates the robot's pose estimate based on encoder readings and returns the updated pose.
+     *
+     * @param leftEncoderPos the current position of the left encoder.
+     * @param rightEncoderPos the current position of the right encoder.
+     * @param horizontalEncoderPos the current position of the horizontal encoder.
+     */
     public void update(double leftEncoderPos, double rightEncoderPos, double horizontalEncoderPos) {
         double deltaLeftEncoder = leftEncoderPos - prevLeftEncoder;
         double deltaRightEncoder = rightEncoderPos - prevRightEncoder;
@@ -84,8 +108,31 @@ public class ThreeDeadWheelOdometry extends Localizer{
         Pose2d newPose = robotPose.exp(twist2d);
 
         previousAngle = angle;
+        previousPose = robotPose;
         start_time = System.nanoTime(); // reset time here
 
         robotPose = new Pose2d(newPose.getTranslation(), angle);
     }
+    /**
+     * gets the current X Velocity of the robot.
+     * @return the current X Velocity of the robot.
+     */
+    public double getXVelocity(){
+        return (previousPose.getX()-robotPose.getX())/(System.nanoTime()-start_time);
+    }
+    /**
+     * gets the current Y Velocity of the robot.
+     * @return the current Y Velocity of the robot.
+     */
+    public double getYVelocity(){
+        return (previousPose.getY()-robotPose.getY())/(System.nanoTime()-start_time);
+    }
+    /**
+     * gets the current Heading Velocity of the robot.
+     * @return the current Heading Velocity of the robot.
+     */
+    public Rotation2d getThetaVelocity(){
+        return new Rotation2d((previousAngle.getRadians()-robotPose.getRotation().getRadians())/(System.nanoTime()-start_time));
+    }
+
 }
