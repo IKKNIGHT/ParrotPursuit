@@ -118,21 +118,20 @@ public class ThreeDeadWheelLocalizer extends Localizer{
      * @return the current X Velocity of the robot.
      */
     public double getXVelocity(){
-        return (previousPose.getX()-robotPose.getX())/(System.nanoTime()-start_time);
+        return (robotPose.getX()-previousPose.getX())/(System.nanoTime()-start_time);
     }
     /**
      * gets the current Y Velocity of the robot.
      * @return the current Y Velocity of the robot.
      */
     public double getYVelocity(){
-        return (previousPose.getY()-robotPose.getY())/(System.nanoTime()-start_time);
+        return (robotPose.getY()-previousPose.getY())/(System.nanoTime()-start_time);
     }
     /**
      * gets the current Heading Velocity of the robot.
      * @return the current Heading Velocity of the robot.
      */
     public Rotation2d getThetaVelocity(){
-        return new Rotation2d((previousAngle.getRadians()-robotPose.getRotation().getRadians())/(System.nanoTime()-start_time));
+        return new Rotation2d((robotPose.getRotation().getRadians()-previousAngle.getRadians())/(System.nanoTime()-start_time));
     }
-
 }
