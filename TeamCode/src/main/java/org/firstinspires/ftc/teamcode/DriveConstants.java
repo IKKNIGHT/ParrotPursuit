@@ -14,4 +14,23 @@ public class DriveConstants {
         public static final String LEFT_BACK = "backleft";
         public static final String RIGHT_BACK = "backright";
     }
+    /**
+     * Parameters for controlling the robot, including feedforward and PID coefficients.
+     */
+    public static class TuneableParams {
+        public static double FORWARD_KS = 0;
+        public static double FORWARD_KV = 1;
+
+        public static double STRAFE_KS = 0;
+        public static double STRAFE_KV = 1;
+
+        public static double ROTATIONAL_KS = 0;
+        public static double ROTATIONAL_KV = 1;
+
+        public static double TRANSLATIONAL_KP = 0.01;
+        public static double TRANSLATIONAL_KD = 0.01;
+
+        public static double HEADING_KP = 0.01;
+        public static double HEADING_KD = 0.01;
+    }
 }
