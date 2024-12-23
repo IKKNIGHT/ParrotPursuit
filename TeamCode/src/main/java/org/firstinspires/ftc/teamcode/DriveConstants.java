@@ -10,6 +10,8 @@ public class DriveConstants {
     public static final Class LOCALIZER_CLASS = PinpointLocalizer.class;
     // public static final Class LOCALIZER_CLASS = ThreeDeadWheelOdometry.class;
 
+
+    // TODO: Configure one of these Localization Configs
     public static class PinpointConfig{
         public static String PINPOINT_NAME="odo";
         public static double PINPOINT_X_OFFSET=0;

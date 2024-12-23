@@ -50,12 +50,21 @@ public class ThreeDeadWheelLocalizer extends Localizer{
         rightEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.RIGHT_ENCODER);
         horizontalEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.HORIZONTAL_ENCODER);
     }
+    /**
+     * Updates the robot's pose estimate based on encoder readings and returns the updated pose.
+     *
+     * @return the updated {@code Pose2d} of the robot.
+     */
     @Override
     public Pose2d update() {
         update(leftEncoder.getCurrentPosition(),rightEncoder.getCurrentPosition(),horizontalEncoder.getCurrentPosition());
         return robotPose;
     }
-
+    /**
+     * Sets a new pose estimate for the robot.
+     *
+     * @param newPose the new {@code Pose2d} to set as the robot's pose estimate.
+     */
     @Override
     public void setPoseEstimate(Pose2d newPose) {
         previousAngle = newPose.getRotation();
@@ -66,15 +75,23 @@ public class ThreeDeadWheelLocalizer extends Localizer{
         prevRightEncoder = 0;
         prevHorizontalEncoder = 0;
     }
-
+    /**
+     * Gets the current pose estimate of the robot.
+     *
+     * @return the current {@code Pose2d} estimate of the robot.
+     */
     @Override
     public Pose2d getPoseEstimate() {
         return robotPose;
     }
-
+    /**
+     * Gets the velocity of the robot as a {@code Transform2d}.
+     *
+     * @return the robot's velocity, represented as a {@code Transform2d}.
+     */
     @Override
     public Transform2d getVelocity() {
-        return new Transform2d(new Pose2d(),new Pose2d(getXVelocity(),getYVelocity(),getThetaVelocity()));
+        return new Transform2d(new Pose2d(),getOdometryVelocity()); // from 0 -> Velocity
     }
     /**
      * updates the robot's pose estimate based on encoder readings and returns the updated pose.
@@ -133,5 +150,8 @@ public class ThreeDeadWheelLocalizer extends Localizer{
      */
     public Rotation2d getThetaVelocity(){
         return new Rotation2d((robotPose.getRotation().getRadians()-previousAngle.getRadians())/(System.nanoTime()-start_time));
+    }
+    public Pose2d getOdometryVelocity(){
+        return new Pose2d(getXVelocity(),getYVelocity(),getThetaVelocity());
     }
 }
