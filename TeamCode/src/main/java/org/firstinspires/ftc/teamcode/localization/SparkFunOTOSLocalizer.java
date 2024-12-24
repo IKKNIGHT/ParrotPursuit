@@ -35,7 +35,7 @@ public class SparkFunOTOSLocalizer extends Localizer {
         otos.setAngularScalar(DriveConstants.SparkFunOTOSConfig.ANGULAR_SCALAR);
         otos.calibrateImu();
         otos.resetTracking();
-        otos.setPosition(startPose.toSparkfunPose());
+        otos.setPosition(startPose.toSparkFunPose());
         SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
         otos.getVersionInfo(hwVersion, fwVersion);
@@ -59,7 +59,7 @@ public class SparkFunOTOSLocalizer extends Localizer {
      */
     @Override
     public void setPoseEstimate(Pose2d newPose) {
-        otos.setPosition(newPose.toSparkfunPose());
+        otos.setPosition(newPose.toSparkFunPose());
     }
 
     /**

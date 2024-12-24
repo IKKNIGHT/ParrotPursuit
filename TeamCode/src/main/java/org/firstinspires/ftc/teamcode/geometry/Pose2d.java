@@ -248,19 +248,36 @@ public class Pose2d {
         return false;
     }
 
+    /**
+     * method that returns a rotated <code>Pose2d</code> from the original parent <code>Pose2d</code>
+     * @param deltaTheta change in heading, you want to rotate the <code>Pose2d</code> by
+     * @return rotated </code>Pose2d</code>
+     */
     public Pose2d rotate(double deltaTheta) {
         return new Pose2d(m_translation, new Rotation2d(getHeading() + deltaTheta));
     }
 
+    /**
+     * method that returns the heading of the <code>Pose2d</code>
+     * @return heading of the <code>Pose2d</code>
+     */
     public double getHeading() {
         return m_rotation.getRadians();
     }
 
+    /**
+     * returns a converted <code>Pose2D</code> from the original <code>Pose2d</code>
+     * @return converted <code>Pose2D</code> in FIRST's Pose2D format
+     */
     public Pose2D toPinpointPose(){
         return new Pose2D(DistanceUnit.INCH, getX(), getY(), AngleUnit.RADIANS, getHeading());
     }
-    public SparkFunOTOS.Pose2D toSparkfunPose(){
+
+    /**
+     * returns a converted <code>SparkFunOTOS.Pose2D</code> from the original <code>Pose2d</code>
+     * @return converted <code>SparkFunOTOS.Pose2D</code> in Sparkfun's Pose2D format
+     */
+    public SparkFunOTOS.Pose2D toSparkFunPose(){
         return new SparkFunOTOS.Pose2D(getX(), getY(), getHeading());
     }
-
 }
