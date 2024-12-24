@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.localization.Localizer;
 import org.firstinspires.ftc.teamcode.localization.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.localization.SparkFunOTOSLocalizer;
 import org.firstinspires.ftc.teamcode.localization.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.controllers.PIDFController;
 
@@ -26,6 +27,8 @@ public abstract class Follower {
             localizer = new PinpointLocalizer(hardwareMap);
         }else if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelLocalizer.class){
             localizer = new ThreeDeadWheelLocalizer(hardwareMap);
+        }else if(DriveConstants.LOCALIZER_CLASS == SparkFunOTOSLocalizer.class){
+            localizer = new SparkFunOTOSLocalizer(hardwareMap);
         }
     }
 

@@ -50,13 +50,22 @@ public class Pose2d {
     }
 
     /**
-     * Convenience constructors that takes in <code>Pose2D</code> directly for odometry support
+     * Convenience constructors that takes in <code>Pose2D</code> directly for FIRST'S pose2D support
      *
      * @param pose2D        Pose2D component for the translational and rotational component of the pose.
      */
     public Pose2d(Pose2D pose2D){
         m_translation = new Translation2d(pose2D.getX(DistanceUnit.INCH), pose2D.getY(DistanceUnit.INCH));
         m_rotation = new Rotation2d(pose2D.getHeading(AngleUnit.RADIANS));
+    }
+
+    /**
+     * Convenience constructors that takes in <code>SparkFunOTOS.Pose2D</code> directly for Sparkfun's pose2D support
+     * @param pose2D    Pose2D component for the translational and rotational component of the pose.
+     */
+    public Pose2d(SparkFunOTOS.Pose2D pose2D){
+        m_translation = new Translation2d(pose2D.x, pose2D.y);
+        m_rotation = new Rotation2d(pose2D.h);
     }
 
     /**
@@ -250,4 +259,8 @@ public class Pose2d {
     public Pose2D toPinpointPose(){
         return new Pose2D(DistanceUnit.INCH, getX(), getY(), AngleUnit.RADIANS, getHeading());
     }
+    public SparkFunOTOS.Pose2D toSparkfunPose(){
+        return new SparkFunOTOS.Pose2D(getX(), getY(), getHeading());
+    }
+
 }
