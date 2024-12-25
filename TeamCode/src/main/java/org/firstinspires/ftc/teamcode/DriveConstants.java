@@ -9,8 +9,8 @@ public class DriveConstants {
     // TODO: change the localizer type, to a class that extends localizer
     //   ex : public static final Class LOCALIZER_CLASS = ThreeDeadWheelLocalizer.class;
     public static final Class LOCALIZER_CLASS = PinpointLocalizer.class;
-    // public static final Class LOCALIZER_CLASS = ThreeDeadWheelOdometry.class;
-    // public static final Class LOCALIZER_CLASS = SparkfunOTOSLocalizer.class;
+    // public static final Class LOCALIZER_CLASS = ThreeDeadWheelLocalizer.class;
+    // public static final Class LOCALIZER_CLASS = SparkFunOTOSLocalizer.class;
 
 
     // TODO: Configure one of these Localization Configs
