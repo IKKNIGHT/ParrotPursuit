@@ -27,7 +27,6 @@ public class SparkFunOTOSLocalizer extends Localizer {
      */
     public SparkFunOTOSLocalizer(HardwareMap hardwareMap, Pose2d startPose){
         otos = hardwareMap.get(SparkFunOTOS.class, DriveConstants.SparkFunOTOSConfig.OTOS_NAME);
-        otos.resetTracking();
         otos.setAngularUnit(AngleUnit.RADIANS);
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setOffset(DriveConstants.SparkFunOTOSConfig.OFFSET);
