@@ -23,12 +23,12 @@ public abstract class Follower {
     public Follower(HardwareMap hardwareMap, Pose2d startPose){
         this.pose = startPose;
         // Initialize localizer (uses PinpointLocalizer by default)
-        if (DriveConstants.LOCALIZER_CLASS == PinpointLocalizer.class) {
-            localizer = new PinpointLocalizer(hardwareMap);
-        }else if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelLocalizer.class){
-            localizer = new ThreeDeadWheelLocalizer(hardwareMap);
+        if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelLocalizer.class){
+            localizer = new ThreeDeadWheelLocalizer(hardwareMap, startPose);
         }else if(DriveConstants.LOCALIZER_CLASS == SparkFunOTOSLocalizer.class){
-            localizer = new SparkFunOTOSLocalizer(hardwareMap);
+            localizer = new SparkFunOTOSLocalizer(hardwareMap, startPose);
+        }else{
+            localizer = new PinpointLocalizer(hardwareMap, startPose);
         }
     }
 

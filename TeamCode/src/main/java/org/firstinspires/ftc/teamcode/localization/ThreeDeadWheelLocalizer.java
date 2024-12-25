@@ -20,13 +20,17 @@ public class ThreeDeadWheelLocalizer extends Localizer{
     public Pose2d previousPose;
     long start_time = System.nanoTime();
 
-
     /**
-     * Constructs a {@code ThreeDeadWheelOdometry} with a default starting pose of (0, 0, 0).
-     *
+     * Constructs a {@code ThreeDeadWheelOdometry} with a hardwareMap for retrieving the encoders.
+     * @param hwMap the hardware map used to retrieve the {@code ThreeDeadWheelOdometry}.
+     * @param initialPose the initial pose estimate for the robot.
      */
-    public ThreeDeadWheelLocalizer(){
-        this(new Pose2d());
+    public ThreeDeadWheelLocalizer(HardwareMap hwMap, Pose2d initialPose){
+        this(initialPose); // set the initial pose
+        // hardware map stuff this(hwMap)
+        leftEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.LEFT_ENCODER);
+        rightEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.RIGHT_ENCODER);
+        horizontalEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.HORIZONTAL_ENCODER);
     }
     /**
      * Constructs a {@code ThreeDeadWheelOdometry} with a default starting pose of (0, 0, 0).
@@ -34,7 +38,7 @@ public class ThreeDeadWheelLocalizer extends Localizer{
      * @param initialPose the initial pose estimate for the robot.
      */
     public ThreeDeadWheelLocalizer(Pose2d initialPose){
-        super();
+        // update the localization pose estimate with the given pose
         previousAngle = initialPose.getRotation();
         robotPose = initialPose;
         previousPose = initialPose;
@@ -45,10 +49,7 @@ public class ThreeDeadWheelLocalizer extends Localizer{
      * @param hwMap the hardware map used to retrieve the {@code ThreeDeadWheelOdometry}.
      */
     public ThreeDeadWheelLocalizer(HardwareMap hwMap){
-        this();
-        leftEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.LEFT_ENCODER);
-        rightEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.RIGHT_ENCODER);
-        horizontalEncoder = hwMap.get(DcMotor.class, DriveConstants.ThreeDeadWheelConfig.HORIZONTAL_ENCODER);
+        this(hwMap, new Pose2d()); // if no pose is given, use default
     }
     /**
      * Updates the robot's pose estimate based on encoder readings and returns the updated pose.
@@ -151,6 +152,10 @@ public class ThreeDeadWheelLocalizer extends Localizer{
     public Rotation2d getThetaVelocity(){
         return new Rotation2d((robotPose.getRotation().getRadians()-previousAngle.getRadians())/(System.nanoTime()-start_time));
     }
+    /**
+     * gets the current Odometry Velocity of the robot.
+     * @return the current Odometry Velocity of the robot.
+     */
     public Pose2d getOdometryVelocity(){
         return new Pose2d(getXVelocity(),getYVelocity(),getThetaVelocity());
     }
