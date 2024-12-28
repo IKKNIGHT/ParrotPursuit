@@ -31,8 +31,8 @@ public class DriveConstants {
     }
     public static class SparkFunOTOSConfig {
         public static final String OTOS_NAME = "otos";
-        public static final SparkFunOTOS.Pose2D OFFSET = new SparkFunOTOS.Pose2D(0, 0, 0);
-        public static final double LINEAR_SCALAR = 1.0;
+        public static final SparkFunOTOS.Pose2D OFFSET = new SparkFunOTOS.Pose2D(0, 0, 0); // from tuning copy all ur offsets in the respective positions here. x,y,heading
+        public static final double LINEAR_SCALAR = 1.0; // You must tune this yourself... Tuning instructions in tuning.readme.md
         public static final double ANGULAR_SCALAR = 1.0;
     }
     public static class MotorConfig{
