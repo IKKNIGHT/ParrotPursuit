@@ -47,10 +47,34 @@ public class PathChain extends Path {
 
     /**
      * Gets the number of paths in the chain.
-     *
      * @return the number of paths
      */
     public int getSegmentCount() {
         return segments.size();
+    }
+
+    /**
+     * Inserts a new path at the specified index.`
+     * @param index index you want to insert the path to
+     * @param path the path to insert
+     */
+    public void insertPath(int index, Path path) {
+        segments.add(index, path);
+    }
+    /**
+     * Gets the path at the specified index.
+     * @param index index of the path you want to get
+     * @return the path at the specified index
+     */
+    public Path getPath(int index) {
+        return segments.get(index);
+    }
+
+    /**
+     * Deletes the path at the specified index.
+     * @param index index of the path you want to delete
+     */
+    public void deletePath(int index) {
+        segments.remove(index);
     }
 }
