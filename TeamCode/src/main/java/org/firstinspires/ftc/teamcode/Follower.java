@@ -28,6 +28,12 @@ public abstract class Follower {
 
     Pose2d targetPos;
 
+    /**
+     * Constructs a {@code Follower} object.
+     * @param hardwareMap hardwareMap with your odo/motors
+     * @param telemetry telemetry for logging
+     * @param startPose starting pose of the robot
+     */
     public Follower(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startPose){
         // Initialize localizer (uses PinpointLocalizer by default)
         if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelLocalizer.class){
@@ -44,6 +50,11 @@ public abstract class Follower {
         headingController = new PIDFController(DriveConstants.TunableParams.HEADING_KP, 0, DriveConstants.TunableParams.HEADING_KD, 0);
 
     }
+
+    /**
+     * sets the target position
+     * @param target target waypoint
+     */
     public void setTarget(WayPoint target){
         XController.setSetPoint(target.getPosition().getX());
         YController.setSetPoint(target.getPosition().getY());
@@ -53,6 +64,10 @@ public abstract class Follower {
         YController.setTolerance(target.getTolerance().getTranslation().getY());
         headingController.setTolerance(target.getTolerance().getRotation().getRadians());
     }
+
+    /**
+     * updates the localizer position and on dashboard
+     */
     public void updateLocalizer(){
         Pose2d pos = localizer.update();
         telemetry.addData("position", pos.getX()+" "+pos.getY()+" "+pos.getHeading());
@@ -66,6 +81,9 @@ public abstract class Follower {
         dashboard.sendTelemetryPacket(packet);
     }
 
+    /**
+     * updates the PIDF controllers
+     */
     public void updatePIDS(){
         Pose2d currPos = localizer.getPoseEstimate();
         if (Double.isNaN(currPos.getX()) || Double.isNaN(currPos.getY()) || Double.isNaN(currPos.getHeading())) {
@@ -77,14 +95,32 @@ public abstract class Follower {
         double headingPower = headingController.calculate(currPos.getHeading());
         driveFieldCentric(XPower, YPower, headingPower, currPos.getHeading());
     }
+    /**
+     * gets the target position
+     * @return target position
+     */
     public Pose2d getTargetPos(){
         return new Pose2d(XController.getSetPoint(), YController.getSetPoint(),new Rotation2d(headingController.getSetPoint()));
     }
 
+    /**
+     * drives the robot using field centric coordinates
+     * @param XPower How much to move forward
+     * @param YPower How much to move sideways
+     * @param turnPower How much to turn
+     * @param currHeading The current heading of the robot
+     */
     public void driveFieldCentric(double XPower, double YPower, double turnPower, double currHeading){
         double x = XPower * Math.cos(currHeading) + YPower * Math.sin(currHeading);
         double y = YPower * Math.cos(currHeading) - XPower * Math.sin(currHeading);
         setWeightedPowers(x, y, turnPower);
     }
+
+    /**
+     * Sets motor powers based on weighted feedforward values for forward, strafe, and heading movements.
+     * @param front forward movement power.
+     * @param strafe strafe (sideways) movement power.
+     * @param heading rotational movement power.
+     */
     public abstract void setWeightedPowers(double front, double strafe, double heading);
 }
