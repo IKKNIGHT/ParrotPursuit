@@ -200,5 +200,7 @@ public class Rotation2d {
         }
         return false;
     }
-
+    public Rotation2d interpolate(Rotation2d other, double x){
+        return new Rotation2d(m_value + x*(other.m_value-m_value));
+    }
 }

@@ -166,5 +166,7 @@ public class Translation2d {
         }
         return false;
     }
-
+    public Translation2d interpolate(Translation2d other, double x){
+        return new Translation2d(m_x + x*(other.m_x-m_x), m_y + x*(other.m_y-m_y));
+    }
 }

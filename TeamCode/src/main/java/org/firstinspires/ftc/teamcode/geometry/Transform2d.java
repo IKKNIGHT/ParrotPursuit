@@ -19,7 +19,11 @@ public class Transform2d {
 
         m_rotation = last.getRotation().minus(initial.getRotation());
     }
-
+    //constructs a transform from another transform
+    public Transform2d(Transform2d other) {
+        m_translation = new Translation2d(other.getTranslation().getX(), other.getTranslation().getY());
+        m_rotation = new Rotation2d(other.getRotation().getRadians());
+    }
     /**
      * Constructs a transform with the given translation and rotation components.
      *
@@ -99,6 +103,21 @@ public class Transform2d {
         return new Transform2d(getTranslation().unaryMinus().rotateBy(getRotation().unaryMinus()),
                 getRotation().unaryMinus());
     }
-
-
+    public Transform2d compose(Transform2d other) {
+        return new Transform2d(m_translation.plus(other.getTranslation().rotateBy(m_rotation)),  m_rotation.plus(other.getRotation()));
+    }
+    public Pose2d transformBy(Pose2d other) {
+        return new Pose2d(m_translation.plus(other.getTranslation().rotateBy(m_rotation)), m_rotation.plus(other.getRotation()));
+    }
+    public Pose2d transformBy(Pose2d other, double scalar) {
+        return new Pose2d(m_translation.plus(other.getTranslation().rotateBy(m_rotation).times(scalar)), m_rotation.plus(other.getRotation().times(scalar)));
+    }
+    public Transform2d interpolate(Transform2d other, double x) {
+        if (x <= 0) {
+            return new Transform2d(this);
+        } else if (x >= 1) {
+            return new Transform2d(other);
+        }
+        return new Transform2d(m_translation.interpolate(other.getTranslation(), x), m_rotation.interpolate(other.getRotation(), x));
+    }
 }

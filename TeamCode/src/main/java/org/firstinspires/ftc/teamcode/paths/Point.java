@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.paths;
 
+import androidx.annotation.NonNull;
+
 public class Point {
     private double x, y;
     public Point(double x, double y){
@@ -42,6 +44,7 @@ public class Point {
     public double angle(){
         return Math.atan2(this.y, this.x);
     }
+    @NonNull
     public String toString(){
         return "("+this.x+", "+this.y+")";
     }

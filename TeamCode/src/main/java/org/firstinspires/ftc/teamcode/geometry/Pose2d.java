@@ -280,4 +280,5 @@ public class Pose2d {
     public SparkFunOTOS.Pose2D toSparkFunPose(){
         return new SparkFunOTOS.Pose2D(getX(), getY(), getHeading());
     }
+
 }
