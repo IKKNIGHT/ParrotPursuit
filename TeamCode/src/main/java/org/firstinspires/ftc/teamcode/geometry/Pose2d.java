@@ -258,8 +258,8 @@ public class Pose2d {
     }
 
     /**
-     * method that returns the heading of the <code>Pose2d</code>
-     * @return heading of the <code>Pose2d</code>
+     * method that returns the heading of the <code>Pose2d</code> in radians
+     * @return heading of the <code>Pose2d</code> iin radians
      */
     public double getHeading() {
         return m_rotation.getRadians();

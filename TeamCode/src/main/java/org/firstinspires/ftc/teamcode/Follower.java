@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.geometry.Pose2d;
+import org.firstinspires.ftc.teamcode.geometry.Rotation2d;
+import org.firstinspires.ftc.teamcode.geometry.WayPoint;
 import org.firstinspires.ftc.teamcode.localization.Localizer;
 import org.firstinspires.ftc.teamcode.localization.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.localization.SparkFunOTOSLocalizer;
@@ -17,11 +23,12 @@ public abstract class Follower {
     // Localizer for tracking robot pose
     Localizer localizer;
 
-    // Current pose of the robot
-    public Pose2d pose;
+    Telemetry telemetry;
+    FtcDashboard dashboard;
 
-    public Follower(HardwareMap hardwareMap, Pose2d startPose){
-        this.pose = startPose;
+    Pose2d targetPos;
+
+    public Follower(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startPose){
         // Initialize localizer (uses PinpointLocalizer by default)
         if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelLocalizer.class){
             localizer = new ThreeDeadWheelLocalizer(hardwareMap, startPose);
@@ -30,7 +37,54 @@ public abstract class Follower {
         }else{
             localizer = new PinpointLocalizer(hardwareMap, startPose);
         }
+        localizer.setPoseEstimate(startPose);
+        this.telemetry = telemetry;
+        XController = new PIDFController(DriveConstants.TunableParams.TRANSLATIONAL_KP, 0, DriveConstants.TunableParams.TRANSLATIONAL_KD, 0);
+        YController = new PIDFController(DriveConstants.TunableParams.TRANSLATIONAL_KP, 0, DriveConstants.TunableParams.TRANSLATIONAL_KD, 0);
+        headingController = new PIDFController(DriveConstants.TunableParams.HEADING_KP, 0, DriveConstants.TunableParams.HEADING_KD, 0);
+
+    }
+    public void setTarget(WayPoint target){
+        XController.setSetPoint(target.getPosition().getX());
+        YController.setSetPoint(target.getPosition().getY());
+        headingController.setSetPoint(target.getPosition().getHeading());
+
+        XController.setTolerance(target.getTolerance().getTranslation().getX());
+        YController.setTolerance(target.getTolerance().getTranslation().getY());
+        headingController.setTolerance(target.getTolerance().getRotation().getRadians());
+    }
+    public void updateLocalizer(){
+        Pose2d pos = localizer.update();
+        telemetry.addData("position", pos.getX()+" "+pos.getY()+" "+pos.getHeading());
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setFill("blue")
+                .strokeCircle(pos.getX(), pos.getY(), 5)
+                .strokeLine(pos.getX(), pos.getY(),
+                        (Math.cos(pos.getHeading())*5)+ pos.getX(),
+                        (Math.sin(pos.getHeading())*5)+ pos.getY());
+
+        dashboard.sendTelemetryPacket(packet);
     }
 
+    public void updatePIDS(){
+        Pose2d currPos = localizer.getPoseEstimate();
+        if (Double.isNaN(currPos.getX()) || Double.isNaN(currPos.getY()) || Double.isNaN(currPos.getHeading())) {
+            System.out.println("THE INPUT IS NAN");
+            return;
+        }
+        double XPower = XController.calculate(currPos.getX());
+        double YPower = YController.calculate(currPos.getY());
+        double headingPower = headingController.calculate(currPos.getHeading());
+        driveFieldCentric(XPower, YPower, headingPower, currPos.getHeading());
+    }
+    public Pose2d getTargetPos(){
+        return new Pose2d(XController.getSetPoint(), YController.getSetPoint(),new Rotation2d(headingController.getSetPoint()));
+    }
+
+    public void driveFieldCentric(double XPower, double YPower, double turnPower, double currHeading){
+        double x = XPower * Math.cos(currHeading) + YPower * Math.sin(currHeading);
+        double y = YPower * Math.cos(currHeading) - XPower * Math.sin(currHeading);
+        setWeightedPowers(x, y, turnPower);
+    }
     public abstract void setWeightedPowers(double front, double strafe, double heading);
 }

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.utils.controllers.SimpleMotorFeedforward;
 
@@ -28,8 +29,8 @@ public class MecanumDrive extends Follower{
      * @param hardwareMap the hardware map used to retrieve motor and sensor configurations.
      * @param startPose        the starting pose of the robot.
      */
-    public MecanumDrive(HardwareMap hardwareMap, Pose2d startPose) {
-        super(hardwareMap, startPose);
+    public MecanumDrive(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startPose) {
+        super(hardwareMap, telemetry, startPose);
 
         // Initialize motors based on hardware configuration
         leftFront = hardwareMap.get(DcMotorEx.class, DriveConstants.MotorConfig.LEFT_FRONT);
