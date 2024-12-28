@@ -17,6 +17,14 @@ public class PathChain extends Path {
         }
         segments.addAll(paths);
     }
+    /**
+     * Constructs a {@code PathChain} object from a varargs array of paths.
+     *
+     * @param paths the paths to define the chain
+     */
+    public PathChain(Path... paths){
+        this(List.of(paths));
+    }
 
     /**
      * Adds a new path to the chain.
