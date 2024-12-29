@@ -33,7 +33,7 @@ public class PinpointLocalizer extends Localizer {
     public PinpointLocalizer(HardwareMap hwMap, Pose2d startPose){
         odo = hwMap.get(GoBildaPinpointDriver.class, DriveConstants.PinpointConfig.PINPOINT_NAME);
         odo.setOffsets(DriveConstants.PinpointConfig.PINPOINT_X_OFFSET, DriveConstants.PinpointConfig.PINPOINT_Y_OFFSET);
-        odo.setEncoderResolution(DriveConstants.PinpointConfig.POD);
+        odo.setEncoderResolution(DriveConstants.PinpointConfig.POD); // change this to odo.setEncoderResolution(double resolution); if using custom odometry pods
         odo.setEncoderDirections(DriveConstants.PinpointConfig.X_DIRECTION, DriveConstants.PinpointConfig.Y_DIRECTION);
 
         odo.setPosition(startPose.toPinpointPose());

@@ -26,8 +26,8 @@ public class DriveConstants {
         public static final String LEFT_ENCODER = "left_encoder";
         public static final String RIGHT_ENCODER = "right_encoder";
         public static final String HORIZONTAL_ENCODER = "horizontal_encoder";
-        public static final double CENTER_WHEEL_OFFSET = 1.0;
-        public static final double TRACK_WIDTH = 10.0;
+        public static final double CENTER_WHEEL_OFFSET = 1.0; // the
+        public static final double TRACK_WIDTH = 10.0; // the distance between the left and right wheels
     }
     public static class SparkFunOTOSConfig {
         public static final String OTOS_NAME = "otos";
@@ -47,6 +47,7 @@ public class DriveConstants {
      * Parameters for controlling the robot, including feedforward and PID coefficients.
      */
     public static class TunableParams {
+        // TODO: tune these coefficients
         public static double FORWARD_KS = 0;
         public static double FORWARD_KV = 1;
 
@@ -61,5 +62,7 @@ public class DriveConstants {
 
         public static double HEADING_KP = 0.01;
         public static double HEADING_KD = 0.01;
+
+        public static double TRACK_WIDTH = 10.0;
     }
 }

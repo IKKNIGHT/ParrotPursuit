@@ -102,6 +102,8 @@ public abstract class Follower {
     public Pose2d getTargetPos(){
         return new Pose2d(XController.getSetPoint(), YController.getSetPoint(),new Rotation2d(headingController.getSetPoint()));
     }
+    @Deprecated
+    public Localizer getLocalizer(){return localizer;}
 
     /**
      * drives the robot using field centric coordinates
