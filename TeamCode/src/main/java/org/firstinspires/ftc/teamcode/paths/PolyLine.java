@@ -7,7 +7,7 @@ public class PolyLine extends Path {
     private final List<Path> segments = new ArrayList<>();
 
     /**
-     * Constructs a {@code PathChain} object from a varargs array of control points.
+     * Constructs a {@code Polyline} object from a varargs array of control points.
      * This path ensures differentiability at intermediate points by dynamically
      * creating paths between points.
      *
@@ -18,15 +18,15 @@ public class PolyLine extends Path {
     }
 
     /**
-     * Constructs a {@code PathChain} object from a list of control points.
+     * Constructs a {@code PolyLine} object from a list of control points.
      * This path ensures differentiability at intermediate points by dynamically
      * creating paths between points.
      *
-     * @param controlPoints the list of points to define the chain
+     * @param controlPoints the list of points to define the line
      */
     public PolyLine(List<Point> controlPoints) {
         if (controlPoints.size() < 2) {
-            throw new IllegalArgumentException("At least two control points are required to create a path chain.");
+            throw new IllegalArgumentException("At least two control points are required to create a PolyLine.");
         }
 
         // Create linear or cubic paths between points as needed
@@ -39,7 +39,7 @@ public class PolyLine extends Path {
     }
 
     /**
-     * Gets the point on the chain at a given time.
+     * Gets the point on the line at a given time.
      *
      * @param t the time (0 to 1) to get the point at
      * @return the point on the chain at the given time
@@ -60,7 +60,7 @@ public class PolyLine extends Path {
      * Validates the given control points.
      *
      * @param controlPoints the list of points to validate
-     * @return true if the control points can define a path chain, false otherwise
+     * @return true if the control points can define a PolyLine, false otherwise
      */
     public boolean isValidPath(List<Point> controlPoints) {
         return controlPoints.size() >= 2;

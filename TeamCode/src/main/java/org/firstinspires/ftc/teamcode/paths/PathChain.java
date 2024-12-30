@@ -62,7 +62,7 @@ public class PathChain extends Path {
     }
 
     /**
-     * Inserts a new path at the specified index.`
+     * Inserts a new path at the specified index; Works like a list.
      * @param index index you want to insert the path to
      * @param path the path to insert
      */
