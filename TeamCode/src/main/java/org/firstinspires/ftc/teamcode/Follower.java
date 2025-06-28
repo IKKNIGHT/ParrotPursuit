@@ -119,7 +119,8 @@ public abstract class Follower {
     }
 
     /**
-     * updates the PIDF controllers
+     * updates the PIDF controllers for waypoint following (legacy method)
+     * For pure pursuit path following, use updatePurePursuit() instead
      */
     public void updatePIDS(){
         Pose2d currPos = localizer.getPoseEstimate();
