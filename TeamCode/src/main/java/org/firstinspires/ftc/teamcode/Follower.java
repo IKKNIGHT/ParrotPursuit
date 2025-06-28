@@ -102,6 +102,19 @@ public abstract class Follower {
                         (Math.cos(pos.getHeading())*5)+ pos.getX(),
                         (Math.sin(pos.getHeading())*5)+ pos.getY());
 
+        // Add path visualization if following a path
+        if (isFollowingPath && currentPath != null) {
+            // Draw the current path
+            for (double t = 0; t <= 1.0; t += 0.05) {
+                Point pathPoint = currentPath.getPoint(t);
+                packet.fieldOverlay().setFill("red").strokeCircle(pathPoint.getX(), pathPoint.getY(), 2);
+            }
+            
+            // Draw lookahead circle
+            packet.fieldOverlay().setStroke("green")
+                    .strokeCircle(pos.getX(), pos.getY(), lookaheadDistance);
+        }
+
         dashboard.sendTelemetryPacket(packet);
     }
 
