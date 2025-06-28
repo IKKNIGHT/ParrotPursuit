@@ -145,34 +145,120 @@ public abstract class Follower {
     private int controlLoopCount;
 
     /**
-     * Constructs a {@code Follower} object.
-     * @param hardwareMap hardwareMap with your odo/motors
-     * @param telemetry telemetry for logging
-     * @param startPose starting pose of the robot
+     * Constructs a {@code Follower} object with comprehensive initialization.
+     * 
+     * <p>This constructor sets up all necessary components for both legacy waypoint
+     * following and modern pure pursuit path following. It automatically detects
+     * and initializes the appropriate localizer based on DriveConstants configuration.
+     * 
+     * <h3>Supported Localizers:</h3>
+     * <ul>
+     * <li><b>PinpointLocalizer:</b> GoBilda Pinpoint odometry (recommended)</li>
+     * <li><b>SparkFunOTOSLocalizer:</b> SparkFun Optical Tracking Odometry Sensor</li>
+     * <li><b>ThreeDeadWheelLocalizer:</b> Traditional three-wheel odometry</li>
+     * </ul>
+     * 
+     * <h3>Initialization Process:</h3>
+     * <ol>
+     * <li>Detect and create appropriate localizer</li>
+     * <li>Initialize PID controllers for legacy waypoint following</li>
+     * <li>Set up FTC Dashboard for visualization</li>
+     * <li>Initialize pure pursuit variables with safe defaults</li>
+     * <li>Reset performance metrics</li>
+     * </ol>
+     * 
+     * @param hardwareMap The robot's hardware map containing motors and sensors
+     * @param telemetry Telemetry interface for displaying data to driver station
+     * @param startPose Starting pose of the robot (position and orientation)
+     * 
+     * @throws IllegalArgumentException if hardwareMap or telemetry is null
+     * @throws RuntimeException if localizer initialization fails
+     * 
+     * @see DriveConstants#LOCALIZER_CLASS
+     * @see DriveConstants.TunableParams
      */
     public Follower(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startPose){
-        // Initialize localizer (uses PinpointLocalizer by default)
-        if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelLocalizer.class){
-            localizer = new ThreeDeadWheelLocalizer(hardwareMap, startPose);
-        }else if(DriveConstants.LOCALIZER_CLASS == SparkFunOTOSLocalizer.class){
-            localizer = new SparkFunOTOSLocalizer(hardwareMap, startPose);
-        }else{
-            localizer = new PinpointLocalizer(hardwareMap, startPose);
+        // Validate input parameters
+        if (hardwareMap == null) {
+            throw new IllegalArgumentException("HardwareMap cannot be null");
         }
-        localizer.setPoseEstimate(startPose);
+        if (telemetry == null) {
+            throw new IllegalArgumentException("Telemetry cannot be null");  
+        }
+        if (startPose == null) {
+            startPose = new Pose2d(); // Default to origin if null
+        }
+        
+        // Initialize localizer based on configuration
+        // This allows teams to switch between different odometry systems easily
+        try {
+            if(DriveConstants.LOCALIZER_CLASS == ThreeDeadWheelLocalizer.class){
+                localizer = new ThreeDeadWheelLocalizer(hardwareMap, startPose);
+            }else if(DriveConstants.LOCALIZER_CLASS == SparkFunOTOSLocalizer.class){
+                localizer = new SparkFunOTOSLocalizer(hardwareMap, startPose);
+            }else{
+                // Default to PinpointLocalizer (most common for modern FTC robots)
+                localizer = new PinpointLocalizer(hardwareMap, startPose);
+            }
+            localizer.setPoseEstimate(startPose);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize localizer: " + e.getMessage(), e);
+        }
+        
+        // Store telemetry reference and initialize dashboard
         this.telemetry = telemetry;
         dashboard = FtcDashboard.getInstance();
         
-        // Initialize PID controllers
-        XController = new PIDFController(DriveConstants.TunableParams.TRANSLATIONAL_KP, 0, DriveConstants.TunableParams.TRANSLATIONAL_KD, 0);
-        YController = new PIDFController(DriveConstants.TunableParams.TRANSLATIONAL_KP, 0, DriveConstants.TunableParams.TRANSLATIONAL_KD, 0);
-        headingController = new PIDFController(DriveConstants.TunableParams.HEADING_KP, 0, DriveConstants.TunableParams.HEADING_KD, 0);
+        // Initialize PID controllers for legacy waypoint following
+        // These use the same gains for X and Y translation for consistency
+        XController = new PIDFController(
+            DriveConstants.TunableParams.TRANSLATIONAL_KP, 
+            0, 
+            DriveConstants.TunableParams.TRANSLATIONAL_KD, 
+            0
+        );
+        YController = new PIDFController(
+            DriveConstants.TunableParams.TRANSLATIONAL_KP, 
+            0, 
+            DriveConstants.TunableParams.TRANSLATIONAL_KD, 
+            0
+        );
+        headingController = new PIDFController(
+            DriveConstants.TunableParams.HEADING_KP, 
+            0, 
+            DriveConstants.TunableParams.HEADING_KD, 
+            0
+        );
 
-        // Initialize pure pursuit variables
+        // Initialize pure pursuit state variables with safe defaults
         isFollowingPath = false;
-        currentVelocity = DriveConstants.TunableParams.MIN_VELOCITY;
-        lookaheadDistance = DriveConstants.TunableParams.LOOKAHEAD_DISTANCE;
+        currentPath = null;
         pathProgress = 0.0;
+        lastClosestPoint = null;
+        
+        // Initialize velocity tracking
+        currentVelocity = DriveConstants.TunableParams.MIN_VELOCITY;
+        previousVelocity = 0.0;
+        smoothedTargetVelocity = DriveConstants.TunableParams.MIN_VELOCITY;
+        
+        // Initialize lookahead distance (can be made adaptive later)
+        lookaheadDistance = DriveConstants.TunableParams.LOOKAHEAD_DISTANCE;
+        
+        // Initialize timing variables
+        pathStartTime = 0;
+        lastUpdateTime = System.currentTimeMillis();
+        
+        // Initialize performance tracking
+        resetPerformanceMetrics();
+        
+        // Initialize error tracking
+        crossTrackError = 0.0;
+        maxCrossTrackError = 0.0;
+        previousCurvature = 0.0;
+        
+        telemetry.addData("Follower", "Initialized successfully");
+        telemetry.addData("Localizer", localizer.getClass().getSimpleName());
+        telemetry.update();
     }
 
     /**
