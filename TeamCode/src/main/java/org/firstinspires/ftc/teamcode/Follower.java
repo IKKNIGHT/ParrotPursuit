@@ -61,10 +61,18 @@ public abstract class Follower {
         }
         localizer.setPoseEstimate(startPose);
         this.telemetry = telemetry;
+        dashboard = FtcDashboard.getInstance();
+        
+        // Initialize PID controllers
         XController = new PIDFController(DriveConstants.TunableParams.TRANSLATIONAL_KP, 0, DriveConstants.TunableParams.TRANSLATIONAL_KD, 0);
         YController = new PIDFController(DriveConstants.TunableParams.TRANSLATIONAL_KP, 0, DriveConstants.TunableParams.TRANSLATIONAL_KD, 0);
         headingController = new PIDFController(DriveConstants.TunableParams.HEADING_KP, 0, DriveConstants.TunableParams.HEADING_KD, 0);
 
+        // Initialize pure pursuit variables
+        isFollowingPath = false;
+        currentVelocity = DriveConstants.TunableParams.MIN_VELOCITY;
+        lookaheadDistance = DriveConstants.TunableParams.LOOKAHEAD_DISTANCE;
+        pathProgress = 0.0;
     }
 
     /**
