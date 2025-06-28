@@ -74,27 +74,75 @@ import java.util.List;
  * @since 1.0
  */
 public abstract class Follower {
+    // ============ CONTROL SYSTEM COMPONENTS ============
+    /** PID controller for X-axis position (legacy waypoint following) */
     PIDFController XController;
+    /** PID controller for Y-axis position (legacy waypoint following) */
     PIDFController YController;
+    /** PID controller for robot heading/rotation */
     PIDFController headingController;
 
-    // Localizer for tracking robot pose
+    /** Localizer for tracking robot pose (position and orientation) */
     Localizer localizer;
 
+    /** Telemetry interface for displaying data to driver station */
     Telemetry telemetry;
+    /** FTC Dashboard instance for real-time visualization and tuning */
     FtcDashboard dashboard;
 
+    /** Target position for legacy waypoint following */
     Pose2d targetPos;
     
-    // Pure Pursuit Path Following Variables
+    // ============ PURE PURSUIT STATE VARIABLES ============
+    /** The path currently being followed (null if not following any path) */
     private Path currentPath;
+    
+    /** Whether the robot is actively following a path */
     private boolean isFollowingPath;
+    
+    /** Current robot velocity in inches per second (estimated) */
     private double currentVelocity;
+    
+    /** Previous robot velocity for acceleration calculation */
+    private double previousVelocity;
+    
+    /** Last closest point found on the path (used for progress tracking) */
     private Point lastClosestPoint;
+    
+    /** Current progress along the path (0.0 = start, 1.0 = end) */
     private double pathProgress;
     
-    // Lookahead distance (can be adaptive)
+    /** Time when path following started (for timeout detection) */
+    private long pathStartTime;
+    
+    /** Last time the control loop was updated (for frequency control) */
+    private long lastUpdateTime;
+    
+    // ============ DYNAMIC TUNING VARIABLES ============
+    /** Current lookahead distance (can be adaptive based on velocity) */
     private double lookaheadDistance;
+    
+    /** Current target velocity (smoothed to prevent jerky motion) */
+    private double smoothedTargetVelocity;
+    
+    /** Previous curvature for smooth curvature changes */
+    private double previousCurvature;
+    
+    /** Error accumulator for integral control in advanced implementations */
+    private double crossTrackError;
+    
+    /** Maximum cross-track error seen (for performance analysis) */
+    private double maxCrossTrackError;
+    
+    // ============ PERFORMANCE METRICS ============
+    /** Total distance traveled along the path */
+    private double totalDistance;
+    
+    /** Average velocity during path following */
+    private double averageVelocity;
+    
+    /** Number of control loop iterations (for performance monitoring) */
+    private int controlLoopCount;
 
     /**
      * Constructs a {@code Follower} object.
