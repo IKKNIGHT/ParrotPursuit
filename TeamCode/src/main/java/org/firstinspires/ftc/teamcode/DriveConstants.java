@@ -64,5 +64,14 @@ public class DriveConstants {
         public static double HEADING_KD = 0.01;
 
         public static double TRACK_WIDTH = 10.0;
+        
+        // Pure Pursuit Parameters
+        public static double LOOKAHEAD_DISTANCE = 12.0; // inches - distance to look ahead on the path
+        public static double MIN_LOOKAHEAD_DISTANCE = 6.0; // minimum lookahead distance
+        public static double MAX_LOOKAHEAD_DISTANCE = 24.0; // maximum lookahead distance
+        public static double PATH_COMPLETION_TOLERANCE = 2.0; // inches - how close to end of path to consider complete
+        public static double MAX_VELOCITY = 24.0; // inches per second - maximum robot velocity
+        public static double MIN_VELOCITY = 6.0; // inches per second - minimum robot velocity
+        public static double CURVATURE_VELOCITY_SCALING = 0.5; // how much to slow down for high curvature
     }
 }
