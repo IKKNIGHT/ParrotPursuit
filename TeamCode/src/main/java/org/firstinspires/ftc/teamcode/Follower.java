@@ -345,19 +345,86 @@ public abstract class Follower {
     // ================== PURE PURSUIT IMPLEMENTATION ==================
 
     /**
-     * Starts following a path using pure pursuit algorithm
-     * @param path the path to follow
+     * Starts following a path using the pure pursuit algorithm.
+     * 
+     * <p>This method initializes the path following state and prepares the robot
+     * to begin pure pursuit control. The robot will automatically follow the path
+     * when {@link #updatePurePursuit()} is called in the main control loop.
+     * 
+     * <h3>Algorithm Overview:</h3>
+     * The pure pursuit algorithm works by:
+     * <ol>
+     * <li><b>Path Sampling:</b> Continuously sample points along the path</li>
+     * <li><b>Closest Point:</b> Find the point on the path closest to the robot</li>
+     * <li><b>Lookahead Point:</b> Find a point on the path that is exactly 
+     *     'lookahead distance' away from the robot</li>
+     * <li><b>Curvature Calculation:</b> Calculate the curvature needed to reach 
+     *     the lookahead point using: κ = 2sin(α)/L</li>
+     * <li><b>Velocity Control:</b> Adjust speed based on path curvature</li>
+     * <li><b>Motor Commands:</b> Convert curvature to motor powers</li>
+     * </ol>
+     * 
+     * <h3>Path Requirements:</h3>
+     * <ul>
+     * <li>Path must be continuous and differentiable</li>
+     * <li>Path should not have sharp discontinuities</li>
+     * <li>Path length should be reasonable for the robot's capabilities</li>
+     * </ul>
+     * 
+     * <h3>Performance Considerations:</h3>
+     * <ul>
+     * <li>Longer paths may require larger lookahead distances</li>
+     * <li>Complex paths benefit from adaptive velocity control</li>
+     * <li>Very short paths (&lt;6 inches) may not work well with pure pursuit</li>
+     * </ul>
+     * 
+     * @param path The path to follow. Must not be null and should be properly constructed.
+     * 
+     * @throws IllegalArgumentException if path is null
+     * @throws IllegalStateException if robot is already following a path
+     * 
+     * @see #updatePurePursuit()
+     * @see #stopPathFollowing()
+     * @see #isFollowingPath()
+     * 
+     * @since 1.0
      */
     public void followPath(Path path) {
+        // Validate input
+        if (path == null) {
+            throw new IllegalArgumentException("Path cannot be null");
+        }
+        
+        if (isFollowingPath) {
+            telemetry.addData("Warning", "Already following a path. Stopping current path.");
+            stopPathFollowing();
+        }
+        
+        // Initialize path following state
         currentPath = path;
         isFollowingPath = true;
         pathProgress = 0.0;
         lastClosestPoint = null;
+        pathStartTime = System.currentTimeMillis();
+        
+        // Reset performance metrics for this path
+        resetPerformanceMetrics();
         
         // Reset the path to start from the beginning
         path.reset();
         
+        // Reset error tracking
+        crossTrackError = 0.0;
+        maxCrossTrackError = 0.0;
+        previousCurvature = 0.0;
+        
+        // Initialize velocity smoothing
+        currentVelocity = DriveConstants.TunableParams.MIN_VELOCITY;
+        smoothedTargetVelocity = DriveConstants.TunableParams.MIN_VELOCITY;
+        
         telemetry.addData("Pure Pursuit", "Started following path");
+        telemetry.addData("Path Type", path.getClass().getSimpleName());
+        telemetry.addData("Start Time", System.currentTimeMillis());
     }
 
     /**
