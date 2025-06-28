@@ -21,6 +21,58 @@ import org.firstinspires.ftc.teamcode.utils.controllers.PIDFController;
 
 import java.util.List;
 
+/**
+ * Abstract base class for robot path following using Pure Pursuit algorithm.
+ * 
+ * <h2>Pure Pursuit Algorithm Overview:</h2>
+ * Pure Pursuit is a path following algorithm that calculates robot steering by:
+ * 1. Finding the closest point on the desired path to the robot
+ * 2. Looking ahead a fixed distance (lookahead) along the path
+ * 3. Calculating the curvature needed to reach that lookahead point
+ * 4. Converting curvature to wheel/motor commands
+ * 
+ * <h2>Key Advantages:</h2>
+ * - Smooth, predictable motion
+ * - Handles complex curved paths naturally  
+ * - Self-correcting (robot automatically returns to path if disturbed)
+ * - Proven algorithm used in autonomous vehicles
+ * 
+ * <h2>Usage Example:</h2>
+ * <pre>{@code
+ * // Initialize drive system
+ * MecanumDrive drive = new MecanumDrive(hardwareMap, telemetry, startPose);
+ * 
+ * // Create a path
+ * LinearPath path = new LinearPath(new Point(0, 0), new Point(48, 24));
+ * 
+ * // Follow the path
+ * drive.followPath(path);
+ * 
+ * // Main control loop
+ * while (opModeIsActive() && drive.isFollowingPath()) {
+ *     drive.updateLocalizer();
+ *     drive.updatePurePursuit();
+ *     sleep(20); // 50Hz update rate
+ * }
+ * }</pre>
+ * 
+ * <h2>Tuning Tips:</h2>
+ * <ul>
+ * <li><b>LOOKAHEAD_DISTANCE:</b> Most important parameter
+ *     <ul>
+ *     <li>Too small: Robot oscillates, unstable</li>
+ *     <li>Too large: Robot cuts corners, overshoots</li>
+ *     <li>Start with 12-15 inches for most FTC robots</li>
+ *     </ul>
+ * </li>
+ * <li><b>MAX_VELOCITY:</b> Match your robot's capabilities</li>
+ * <li><b>CURVATURE_VELOCITY_SCALING:</b> 0.5 is a good starting point</li>
+ * </ul>
+ * 
+ * @author FTC Team - Parrot Pursuit Implementation
+ * @version 2.0
+ * @since 1.0
+ */
 public abstract class Follower {
     PIDFController XController;
     PIDFController YController;
