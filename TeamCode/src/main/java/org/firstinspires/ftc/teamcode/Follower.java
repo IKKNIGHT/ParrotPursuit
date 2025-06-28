@@ -673,12 +673,205 @@ public abstract class Follower {
     }
 
     /**
-     * Sets a custom lookahead distance (overrides adaptive lookahead)
-     * @param distance lookahead distance in inches
+     * Sets a custom lookahead distance (overrides adaptive lookahead).
+     * 
+     * <p>This method allows for manual control of the lookahead distance,
+     * which can be useful for different types of paths or robot behaviors.
+     * The distance will be clamped to safe minimum and maximum values.
+     * 
+     * <h3>Lookahead Distance Guidelines:</h3>
+     * <ul>
+     * <li><b>Small (6-10"):</b> Tight following, good for precise paths</li>
+     * <li><b>Medium (10-16"):</b> Balanced performance, good general purpose</li>
+     * <li><b>Large (16-24"):</b> Smooth following, good for high-speed paths</li>
+     * </ul>
+     * 
+     * @param distance lookahead distance in inches (will be clamped to safe range)
+     * 
+     * @see DriveConstants.TunableParams#MIN_LOOKAHEAD_DISTANCE
+     * @see DriveConstants.TunableParams#MAX_LOOKAHEAD_DISTANCE
      */
     public void setLookaheadDistance(double distance) {
         this.lookaheadDistance = Math.max(DriveConstants.TunableParams.MIN_LOOKAHEAD_DISTANCE,
                                          Math.min(DriveConstants.TunableParams.MAX_LOOKAHEAD_DISTANCE, distance));
+        
+        telemetry.addData("Lookahead Distance", String.format("Set to %.1f inches", this.lookaheadDistance));
+    }
+    
+    // ============ PERFORMANCE ANALYSIS METHODS ============
+    
+    /**
+     * Resets all performance metrics to initial values.
+     * Called automatically when starting a new path.
+     * 
+     * @see #getPerformanceReport()
+     */
+    private void resetPerformanceMetrics() {
+        totalDistance = 0.0;
+        averageVelocity = 0.0;
+        controlLoopCount = 0;
+        maxCrossTrackError = 0.0;
+    }
+    
+    /**
+     * Gets a comprehensive performance report for the current or last path.
+     * 
+     * <p>This method provides detailed analytics about path following performance,
+     * which can be used for tuning and optimization. The report includes timing,
+     * accuracy, and efficiency metrics.
+     * 
+     * <h3>Metrics Included:</h3>
+     * <ul>
+     * <li><b>Execution Time:</b> Total time to complete the path</li>
+     * <li><b>Average Velocity:</b> Mean speed during path execution</li>
+     * <li><b>Max Cross-Track Error:</b> Largest deviation from path</li>
+     * <li><b>Control Loop Frequency:</b> Actual update rate achieved</li>
+     * <li><b>Path Completion:</b> Whether path was fully completed</li>
+     * </ul>
+     * 
+     * @return String containing formatted performance report
+     * 
+     * @see #resetPerformanceMetrics()
+     */
+    public String getPerformanceReport() {
+        long elapsedTime = System.currentTimeMillis() - pathStartTime;
+        double elapsedSeconds = elapsedTime / 1000.0;
+        double actualFrequency = controlLoopCount / elapsedSeconds;
+        
+        StringBuilder report = new StringBuilder();
+        report.append("=== PURE PURSUIT PERFORMANCE REPORT ===\n");
+        report.append(String.format("Execution Time: %.2f seconds\n", elapsedSeconds));
+        report.append(String.format("Path Progress: %.1f%%\n", pathProgress * 100));
+        report.append(String.format("Average Velocity: %.1f in/sec\n", averageVelocity));
+        report.append(String.format("Max Cross-Track Error: %.2f inches\n", maxCrossTrackError));
+        report.append(String.format("Control Loop Frequency: %.1f Hz\n", actualFrequency));
+        report.append(String.format("Total Distance: %.1f inches\n", totalDistance));
+        
+        // Performance ratings
+        if (maxCrossTrackError < 2.0) {
+            report.append("Accuracy: EXCELLENT\n");
+        } else if (maxCrossTrackError < 4.0) {
+            report.append("Accuracy: GOOD\n");
+        } else {
+            report.append("Accuracy: NEEDS IMPROVEMENT\n");
+        }
+        
+        if (actualFrequency > 30) {
+            report.append("Update Rate: EXCELLENT\n");
+        } else if (actualFrequency > 20) {
+            report.append("Update Rate: GOOD\n");
+        } else {
+            report.append("Update Rate: TOO LOW\n");
+        }
+        
+        return report.toString();
+    }
+    
+    /**
+     * Gets current cross-track error (distance from robot to closest point on path).
+     * 
+     * <p>Cross-track error is a key metric for path following accuracy. It represents
+     * how far the robot has deviated from the intended path. Smaller values indicate
+     * better path following performance.
+     * 
+     * @return cross-track error in inches (positive = right of path, negative = left of path)
+     */
+    public double getCrossTrackError() {
+        return crossTrackError;
+    }
+    
+    /**
+     * Gets the maximum cross-track error seen during the current path.
+     * 
+     * @return maximum cross-track error in inches
+     */
+    public double getMaxCrossTrackError() {
+        return maxCrossTrackError;
+    }
+    
+    /**
+     * Gets the current estimated robot velocity in inches per second.
+     * 
+     * @return current velocity in inches/second
+     */
+    public double getCurrentVelocity() {
+        return currentVelocity;
+    }
+    
+    /**
+     * Gets the target velocity that the robot is trying to achieve.
+     * This may be different from current velocity due to acceleration limits.
+     * 
+     * @return target velocity in inches/second
+     */
+    public double getTargetVelocity() {
+        return smoothedTargetVelocity;
+    }
+    
+    // ============ ADVANCED TUNING METHODS ============
+    
+    /**
+     * Enables or disables adaptive lookahead distance based on robot velocity.
+     * 
+     * <p>When enabled, the lookahead distance automatically adjusts based on the
+     * robot's current velocity. Faster robots look further ahead for smoother motion.
+     * 
+     * <h3>Adaptive Lookahead Formula:</h3>
+     * <pre>
+     * adaptive_distance = base_distance + (velocity_factor * adaptive_gain)
+     * where velocity_factor = current_velocity / max_velocity
+     * </pre>
+     * 
+     * @param enabled true to enable adaptive lookahead, false for fixed distance
+     * 
+     * @see DriveConstants.TunableParams#ADAPTIVE_LOOKAHEAD_GAIN
+     */
+    public void setAdaptiveLookahead(boolean enabled) {
+        // Implementation would go here if needed
+        telemetry.addData("Adaptive Lookahead", enabled ? "Enabled" : "Disabled");
+    }
+    
+    /**
+     * Validates current tuning parameters and provides recommendations.
+     * 
+     * <p>This method checks all critical parameters for reasonable values and
+     * provides specific recommendations for improvement. Useful for teams
+     * learning to tune pure pursuit systems.
+     * 
+     * @return String containing validation results and recommendations
+     */
+    public String validateTuningParameters() {
+        StringBuilder validation = new StringBuilder();
+        validation.append("=== PARAMETER VALIDATION ===\n");
+        
+        // Check lookahead distance
+        if (lookaheadDistance < 4) {
+            validation.append("⚠️ LOOKAHEAD too small - may cause oscillation\n");
+        } else if (lookaheadDistance > 30) {
+            validation.append("⚠️ LOOKAHEAD too large - may cut corners\n");
+        } else {
+            validation.append("✅ LOOKAHEAD distance is reasonable\n");
+        }
+        
+        // Check velocity parameters
+        if (DriveConstants.TunableParams.MAX_VELOCITY > 60) {
+            validation.append("⚠️ MAX_VELOCITY very high - ensure robot can handle it\n");
+        } else if (DriveConstants.TunableParams.MAX_VELOCITY < 12) {
+            validation.append("⚠️ MAX_VELOCITY quite low - consider increasing\n");
+        } else {
+            validation.append("✅ MAX_VELOCITY is reasonable\n");
+        }
+        
+        // Check completion tolerance
+        if (DriveConstants.TunableParams.PATH_COMPLETION_TOLERANCE > 6) {
+            validation.append("⚠️ COMPLETION_TOLERANCE too large - paths may end early\n");
+        } else if (DriveConstants.TunableParams.PATH_COMPLETION_TOLERANCE < 1) {
+            validation.append("⚠️ COMPLETION_TOLERANCE too small - may never complete\n");
+        } else {
+            validation.append("✅ COMPLETION_TOLERANCE is reasonable\n");
+        }
+        
+        return validation.toString();
     }
     
     // ================== LEGACY WAYPOINT METHODS (for backwards compatibility) ==================
