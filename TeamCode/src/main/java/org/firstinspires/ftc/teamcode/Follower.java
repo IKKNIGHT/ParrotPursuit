@@ -33,6 +33,16 @@ public abstract class Follower {
     FtcDashboard dashboard;
 
     Pose2d targetPos;
+    
+    // Pure Pursuit Path Following Variables
+    private Path currentPath;
+    private boolean isFollowingPath;
+    private double currentVelocity;
+    private Point lastClosestPoint;
+    private double pathProgress;
+    
+    // Lookahead distance (can be adaptive)
+    private double lookaheadDistance;
 
     /**
      * Constructs a {@code Follower} object.
