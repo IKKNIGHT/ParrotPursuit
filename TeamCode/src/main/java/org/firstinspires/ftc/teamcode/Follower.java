@@ -8,12 +8,18 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.geometry.Rotation2d;
+import org.firstinspires.ftc.teamcode.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.geometry.WayPoint;
 import org.firstinspires.ftc.teamcode.localization.Localizer;
 import org.firstinspires.ftc.teamcode.localization.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.localization.SparkFunOTOSLocalizer;
 import org.firstinspires.ftc.teamcode.localization.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.paths.Path;
+import org.firstinspires.ftc.teamcode.paths.Point;
+import org.firstinspires.ftc.teamcode.utils.ParrotPursuitUtils;
 import org.firstinspires.ftc.teamcode.utils.controllers.PIDFController;
+
+import java.util.List;
 
 public abstract class Follower {
     PIDFController XController;
