@@ -26,7 +26,6 @@ public class SimplePurePursuitTest extends LinearOpMode {
     static MecanumDrive drive;
     PathScheduler pathScheduler;
 
-
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize the drive system at origin
@@ -60,18 +59,15 @@ public class SimplePurePursuitTest extends LinearOpMode {
             // Main control loop
             while (opModeIsActive() && drive.isFollowingPath()) {
                 pathScheduler.runScheduledPaths(opModeIsActive(), new TelemetryAction(telemetry));
-                /**
-                 * You can either do this or just do `drive.followPath(path);`
-                 */
+                // alternatively
                 drive.followPath(a);
+                drive.updatePurePursuit();
+                drive.updateLocalizer();
             }
             
             // Path completed
             telemetry.addData("Status", "Path Complete!");
             telemetry.update();
-            
-            // Stop the robot
-            drive.stopPathFollowing();
         }
 
     }
