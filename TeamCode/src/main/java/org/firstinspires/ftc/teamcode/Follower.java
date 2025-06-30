@@ -441,12 +441,15 @@ public abstract class Follower {
      * Updates the pure pursuit control - call this in your main loop
      */
     public void updatePurePursuit() {
+
+
+
         if (!isFollowingPath || currentPath == null) {
             return;
         }
 
         Pose2d currentPose = localizer.getPoseEstimate();
-        
+
         if (Double.isNaN(currentPose.getX()) || Double.isNaN(currentPose.getY()) || Double.isNaN(currentPose.getHeading())) {
             telemetry.addData("Error", "Invalid pose data");
             return;
@@ -633,7 +636,7 @@ public abstract class Follower {
             robotPose.getX() - endPoint.getX(),
             robotPose.getY() - endPoint.getY()
         );
-        
+
         return distanceToEnd < DriveConstants.TunableParams.PATH_COMPLETION_TOLERANCE;
     }
 
@@ -883,4 +886,5 @@ public abstract class Follower {
      * @param heading rotational movement power.
      */
     public abstract void setWeightedPowers(double front, double strafe, double heading);
+
 }
